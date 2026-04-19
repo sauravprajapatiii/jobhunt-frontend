@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setAllApplicants } from "../../redux/applicationSlice";
 import axiosInstance from "../../utils/axios";
+// import axiosInstance from "../../utils/axios";
 
 const Applicants = () => {
   const params = useParams();
