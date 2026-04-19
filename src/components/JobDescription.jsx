@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { setSingleJob } from "../redux/jobSlice";
-import axios from "axios";
+import axios from "../utils/axios";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 
@@ -18,14 +18,11 @@ const JobDescription = () => {
   // ✅ Apply Job
   const applyJobHandler = async () => {
     try {
-      const res = await axios.get(`/api/application/apply/${jobId}`, {
-        withCredentials: true,
-      });
+      const res = await axios.get(`/api/application/apply/${jobId}`);
 
       if (res.data.success) {
         setIsApplied(true);
 
-        // Update applications locally
         const updatedJob = {
           ...singleJob,
           applications: [
@@ -48,18 +45,16 @@ const JobDescription = () => {
     const fetchSingleJob = async () => {
       try {
         const res = await axios.get(`/api/job/get/${jobId}`);
+
         if (res.data.success) {
           const job = res.data.job;
 
           dispatch(setSingleJob(job));
 
-          // Check if user already applied
           const applied = job?.applications?.some((application) => {
-            // If applications are objects
             if (typeof application === "object") {
               return application.applicant === user?._id;
             }
-            // If applications are IDs
             return application === user?._id;
           });
 
@@ -70,15 +65,13 @@ const JobDescription = () => {
       }
     };
 
-    fetchSingleJob();
+    if (jobId) fetchSingleJob();
   }, [jobId, dispatch, user?._id]);
+
   return (
     <div className="max-w-5xl mx-auto my-10 px-4">
-      {/* Card Container */}
       <div className="bg-white shadow-xl rounded-2xl p-6 border">
-        {/* Header */}
         <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-          {/* Title + Tags */}
           <div>
             <h1 className="text-2xl font-bold text-gray-800">
               {singleJob?.title}
@@ -99,7 +92,6 @@ const JobDescription = () => {
             </div>
           </div>
 
-          {/* Apply Button */}
           <button
             onClick={!isApplied ? applyJobHandler : null}
             disabled={isApplied}
@@ -113,10 +105,8 @@ const JobDescription = () => {
           </button>
         </div>
 
-        {/* Divider */}
         <div className="border-t my-6"></div>
 
-        {/* Description */}
         <div>
           <h2 className="text-lg font-semibold text-gray-700 mb-2">
             Job Description
@@ -126,7 +116,6 @@ const JobDescription = () => {
           </p>
         </div>
 
-        {/* Details Grid */}
         <div className="grid md:grid-cols-2 gap-6 mt-6">
           <div className="space-y-2">
             <p>

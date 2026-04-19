@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Navbar from "../shared/Navbar";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
-import axios from "axios";
+import axiosInstance from "../../utils/axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 
@@ -29,17 +29,17 @@ const EditJob = () => {
   useEffect(() => {
     const fetchJob = async () => {
       try {
-        const res = await axios.get(`/api/job/get/${id}`, {
-          withCredentials: true,
-        });
+        if (!id) return;
+
+        const res = await axiosInstance.get(`/api/job/get/${id}`);
 
         if (res.data.success) {
           const job = res.data.job;
 
           setInput({
             ...job,
-            requirements: job.requirements.join(","), // array → string
-            company: job.company?._id || job.company,
+            requirements: job.requirements?.join(",") || "",
+            company: job.company?._id || job.company || "",
           });
         }
       } catch (error) {
@@ -59,16 +59,15 @@ const EditJob = () => {
     setInput({ ...input, company: e.target.value });
   };
 
-  // ✅ Update handler (only change from PostJob)
+  // ✅ Update handler
   const handleUpdate = async (e) => {
     e.preventDefault();
 
     try {
       setLoading(true);
 
-      const res = await axios.put(`/api/job/${id}`, input, {
+      const res = await axiosInstance.put(`/api/job/${id}`, input, {
         headers: { "Content-Type": "application/json" },
-        withCredentials: true,
       });
 
       if (res.data.success) {
@@ -77,7 +76,7 @@ const EditJob = () => {
       }
     } catch (error) {
       console.log(error);
-      toast.error(error.response?.data?.message || "Update failed");
+      toast.error(error?.response?.data?.message || "Update failed");
     } finally {
       setLoading(false);
     }
@@ -116,7 +115,7 @@ const EditJob = () => {
                 <input
                   type={field.type}
                   name={field.name}
-                  value={input[field.name]}
+                  value={input[field.name] || ""}
                   onChange={handleInput}
                   className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black transition"
                 />
@@ -125,7 +124,7 @@ const EditJob = () => {
           </div>
 
           {/* Company Select */}
-          {companies.length > 0 && (
+          {companies?.length > 0 && (
             <div className="mt-4">
               <label className="text-sm font-medium text-gray-700 mb-1 block">
                 Select Company
@@ -148,16 +147,10 @@ const EditJob = () => {
           )}
 
           <div className="mt-6">
-            {loading ? (
-              <button className="flex items-center justify-center gap-2 bg-black text-white px-4 py-2 rounded-md w-full">
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Please wait
-              </button>
-            ) : (
-              <button className="bg-black text-white px-4 py-2 rounded-md w-full">
-                Update Job
-              </button>
-            )}
+            <button className="bg-black text-white px-4 py-2 rounded-md w-full flex items-center justify-center gap-2">
+              {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+              {loading ? "Please wait..." : "Update Job"}
+            </button>
           </div>
         </form>
       </div>

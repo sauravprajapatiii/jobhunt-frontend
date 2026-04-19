@@ -1,17 +1,16 @@
-import axios from "axios";
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { setAllJobs } from "../redux/jobSlice";
 import { setAllCompany } from "../redux/companySlice";
+import axiosInstance from "../utils/axios";
 
 const useGetAllCompany = () => {
   const dispatch = useDispatch();
+
   useEffect(() => {
     const fetchAllCompany = async () => {
       try {
-        const res = await axios.get("/api/company/get", {
-          withCredentials: true,
-        });
+        const res = await axiosInstance.get("/api/company/get");
+
         if (res.data.success) {
           dispatch(setAllCompany(res.data.companies));
         }
@@ -19,8 +18,9 @@ const useGetAllCompany = () => {
         console.log(error);
       }
     };
+
     fetchAllCompany();
-  }, []);
+  }, [dispatch]);
 };
 
 export default useGetAllCompany;

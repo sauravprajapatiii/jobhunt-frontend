@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Navbar from "../shared/Navbar";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axiosInstance from "../../utils/axios";
 import { useDispatch } from "react-redux";
 import { setSingleCompany } from "../../redux/companySlice";
 import { toast } from "sonner";
@@ -12,25 +12,29 @@ const CreateCompany = () => {
   const dispatch = useDispatch();
 
   const registerNewCompany = async () => {
+    if (!companyName.trim()) {
+      return toast.error("Company name is required");
+    }
+
     try {
-      const res = await axios.post(
+      const res = await axiosInstance.post(
         "/api/company/register",
         { companyName },
         {
           headers: { "Content-Type": "application/json" },
-          withCredentials: true,
         },
       );
 
       if (res.data.success) {
         dispatch(setSingleCompany(res.data.company));
         toast.success(res.data.message);
+
         const companyId = res.data.company._id;
         navigate(`/admin/companies/${companyId}`);
       }
     } catch (error) {
       console.log(error);
-      toast.error(error.response?.data?.message);
+      toast.error(error?.response?.data?.message || "Something went wrong");
     }
   };
 
@@ -55,9 +59,8 @@ const CreateCompany = () => {
             type="text"
             className="my-2 border border-gray-300 py-2 px-2 rounded-md text-sm w-full"
             placeholder="JobHunt, Microsoft, etc."
-            onChange={(e) => {
-              setCompanyName(e.target.value);
-            }}
+            value={companyName}
+            onChange={(e) => setCompanyName(e.target.value)}
           />
 
           {/* Buttons */}

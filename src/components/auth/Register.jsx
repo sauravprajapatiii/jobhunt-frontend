@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Navbar from "../shared/Navbar";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import axiosInstance from "../../utils/axios";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
@@ -32,7 +32,7 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (loading) return; // ✅ prevent multiple clicks
+    if (loading) return;
 
     const formData = new FormData();
     formData.append("fullname", input.fullname);
@@ -48,9 +48,8 @@ const Register = () => {
     try {
       dispatch(setLoading(true));
 
-      const res = await axios.post("/api/user/register", formData, {
+      const res = await axiosInstance.post("/api/user/register", formData, {
         headers: { "Content-Type": "multipart/form-data" },
-        withCredentials: true,
       });
 
       if (res.data.success) {
@@ -60,9 +59,10 @@ const Register = () => {
         toast.error(res.data.message);
       }
     } catch (error) {
+      console.log(error);
       toast.error(error.response?.data?.message || "Registration failed");
     } finally {
-      dispatch(setLoading(false)); // ✅ MUST
+      dispatch(setLoading(false));
     }
   };
 
@@ -147,7 +147,7 @@ const Register = () => {
 
           <button
             disabled={loading}
-            className="w-full bg-[#F83002] text-white py-2 mt-4 rounded flex items-center justify-center gap-2"
+            className="w-full bg-[#F83002] text-white py-2 mt-4 rounded flex items-center justify-center gap-2 disabled:opacity-70"
           >
             {loading && <Loader2 className="h-5 w-5 animate-spin" />}
             {loading ? "Registering..." : "Register"}

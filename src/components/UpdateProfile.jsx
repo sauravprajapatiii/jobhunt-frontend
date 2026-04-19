@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import axios from "axios";
+import axiosInstance from "../utils/axios";
 import { setUser } from "../redux/authSlice";
 import { toast } from "sonner";
 
@@ -9,7 +9,6 @@ const UpdateProfile = ({ open, setOpen }) => {
   const { user } = useSelector((store) => store.auth);
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
-  console.log(user.profile);
 
   const [form, setForm] = useState({
     fullname: "",
@@ -20,7 +19,7 @@ const UpdateProfile = ({ open, setOpen }) => {
     file: null,
   });
 
-  // ✅ Prefill form when modal opens
+  // ✅ Prefill form
   useEffect(() => {
     if (user && open) {
       setForm({
@@ -48,11 +47,10 @@ const UpdateProfile = ({ open, setOpen }) => {
     });
   };
 
-  // ✅ UPDATED SUBMIT
+  // ✅ Submit
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    setLoading(true); // ✅ start loading
+    setLoading(true);
 
     try {
       const formData = new FormData();
@@ -67,10 +65,13 @@ const UpdateProfile = ({ open, setOpen }) => {
         formData.append("profilePhoto", form.file);
       }
 
-      const res = await axios.put("/api/user/profile/update", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-        withCredentials: true,
-      });
+      const res = await axiosInstance.put(
+        "/api/user/profile/update",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        },
+      );
 
       if (res.data.success) {
         dispatch(setUser(res.data.user));
@@ -78,9 +79,10 @@ const UpdateProfile = ({ open, setOpen }) => {
         setOpen(false);
       }
     } catch (error) {
+      console.log(error);
       toast.error(error.response?.data?.message || "Update failed");
     } finally {
-      setLoading(false); // ✅ stop loading
+      setLoading(false);
     }
   };
 
@@ -109,72 +111,55 @@ const UpdateProfile = ({ open, setOpen }) => {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">Full Name</label>
-            <input
-              type="text"
-              name="fullname"
-              className="w-full border p-2 rounded"
-              value={form.fullname}
-              onChange={handleChange}
-            />
-          </div>
+          <input
+            type="text"
+            name="fullname"
+            placeholder="Full Name"
+            className="w-full border p-2 rounded"
+            value={form.fullname}
+            onChange={handleChange}
+          />
 
-          <div>
-            <label className="block text-sm font-medium mb-1">Email</label>
-            <input
-              type="email"
-              name="email"
-              className="w-full border p-2 rounded"
-              value={form.email}
-              onChange={handleChange}
-            />
-          </div>
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            className="w-full border p-2 rounded"
+            value={form.email}
+            onChange={handleChange}
+          />
 
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              Phone Number
-            </label>
-            <input
-              type="tel"
-              name="phone"
-              className="w-full border p-2 rounded"
-              value={form.phone}
-              onChange={handleChange}
-            />
-          </div>
+          <input
+            type="tel"
+            name="phone"
+            placeholder="Phone Number"
+            className="w-full border p-2 rounded"
+            value={form.phone}
+            onChange={handleChange}
+          />
 
-          <div>
-            <label className="block text-sm font-medium mb-1">Skills</label>
-            <input
-              type="text"
-              name="skills"
-              className="w-full border p-2 rounded"
-              value={form.skills}
-              onChange={handleChange}
-            />
-          </div>
+          <input
+            type="text"
+            name="skills"
+            placeholder="Skills (comma separated)"
+            className="w-full border p-2 rounded"
+            value={form.skills}
+            onChange={handleChange}
+          />
 
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              Profile Photo
-            </label>
-            <input
-              type="file"
-              className="w-full border p-2 rounded"
-              onChange={handleFileChange}
-            />
-          </div>
+          <input
+            type="file"
+            className="w-full border p-2 rounded"
+            onChange={handleFileChange}
+          />
 
-          <div>
-            <label className="block text-sm font-medium mb-1">Bio</label>
-            <textarea
-              name="bio"
-              className="w-full border p-2 rounded"
-              value={form.bio}
-              onChange={handleChange}
-            />
-          </div>
+          <textarea
+            name="bio"
+            placeholder="Bio"
+            className="w-full border p-2 rounded"
+            value={form.bio}
+            onChange={handleChange}
+          />
 
           <div className="flex justify-end gap-3 pt-2">
             <button

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../shared/Navbar";
 import { ArrowLeft, Loader2 } from "lucide-react";
-import axios from "axios";
+import axiosInstance from "../../utils/axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { useSelector } from "react-redux";
@@ -11,6 +11,7 @@ const CompanySetup = () => {
   const params = useParams();
 
   useGetCompanyById(params.id);
+
   const [input, setInput] = useState({
     name: "",
     description: "",
@@ -46,6 +47,7 @@ const CompanySetup = () => {
 
   const submitHandler = async (e) => {
     e.preventDefault();
+
     const formData = new FormData();
     formData.append("name", input.name);
     formData.append("description", input.description);
@@ -58,12 +60,12 @@ const CompanySetup = () => {
 
     try {
       setLoading(true);
-      const res = await axios.put(
+
+      const res = await axiosInstance.put(
         `/api/company/update/${params.id}`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
-          withCredentials: true,
         },
       );
 
@@ -73,7 +75,7 @@ const CompanySetup = () => {
       }
     } catch (error) {
       console.log(error);
-      toast.error(error.response?.data?.message);
+      toast.error(error?.response?.data?.message || "Update failed");
     } finally {
       setLoading(false);
     }
@@ -104,75 +106,58 @@ const CompanySetup = () => {
             </h1>
           </div>
 
-          {/* Form Fields */}
+          {/* Form */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="flex flex-col">
-              <label className="text-sm mb-1">Company Name</label>
-              <input
-                className="border border-gray-300 px-2 py-2 rounded-md text-sm"
-                type="text"
-                name="name"
-                value={input.name}
-                onChange={handleChange}
-              />
-            </div>
+            <input
+              className="border px-2 py-2 rounded-md text-sm"
+              type="text"
+              name="name"
+              placeholder="Company Name"
+              value={input.name}
+              onChange={handleChange}
+            />
 
-            <div className="flex flex-col">
-              <label className="text-sm mb-1">Description</label>
-              <input
-                className="border border-gray-300 px-2 py-2 rounded-md text-sm"
-                type="text"
-                name="description"
-                value={input.description}
-                onChange={handleChange}
-              />
-            </div>
+            <input
+              className="border px-2 py-2 rounded-md text-sm"
+              type="text"
+              name="description"
+              placeholder="Description"
+              value={input.description}
+              onChange={handleChange}
+            />
 
-            <div className="flex flex-col">
-              <label className="text-sm mb-1">Website</label>
-              <input
-                className="border border-gray-300 px-2 py-2 rounded-md text-sm"
-                type="text"
-                name="website"
-                value={input.website}
-                onChange={handleChange}
-              />
-            </div>
+            <input
+              className="border px-2 py-2 rounded-md text-sm"
+              type="text"
+              name="website"
+              placeholder="Website"
+              value={input.website}
+              onChange={handleChange}
+            />
 
-            <div className="flex flex-col">
-              <label className="text-sm mb-1">Location</label>
-              <input
-                className="border border-gray-300 px-2 py-2 rounded-md text-sm"
-                type="text"
-                name="location"
-                value={input.location}
-                onChange={handleChange}
-              />
-            </div>
+            <input
+              className="border px-2 py-2 rounded-md text-sm"
+              type="text"
+              name="location"
+              placeholder="Location"
+              value={input.location}
+              onChange={handleChange}
+            />
 
-            <div className="flex flex-col sm:col-span-2">
-              <label className="text-sm mb-1">Logo</label>
-              <input
-                className="text-sm"
-                type="file"
-                accept="image/*"
-                onChange={fileHandle}
-              />
-            </div>
+            <input
+              className="sm:col-span-2 text-sm"
+              type="file"
+              accept="image/*"
+              onChange={fileHandle}
+            />
           </div>
 
           {/* Button */}
           <div className="mt-6">
-            {loading ? (
-              <button className="flex items-center justify-center gap-2 bg-black text-white px-4 py-2 rounded-md w-full">
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Please wait
-              </button>
-            ) : (
-              <button className="bg-black text-white px-4 py-2 rounded-md w-full">
-                Update
-              </button>
-            )}
+            <button className="bg-black text-white px-4 py-2 rounded-md w-full flex items-center justify-center gap-2">
+              {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+              {loading ? "Please wait..." : "Update"}
+            </button>
           </div>
         </form>
       </div>

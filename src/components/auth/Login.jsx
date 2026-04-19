@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Navbar from "../shared/Navbar";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import axiosInstance from "../../utils/axios";
 import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoading, setUser } from "../../redux/authSlice";
@@ -10,7 +10,7 @@ import { Loader2 } from "lucide-react";
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { loading, user } = useSelector((store) => store.auth);
+  const { loading } = useSelector((store) => store.auth);
 
   const [input, setInput] = useState({
     email: "",
@@ -24,17 +24,15 @@ const Login = () => {
     try {
       dispatch(setLoading(true));
 
-      const res = await axios.post("/api/user/login", input, {
-        withCredentials: true,
-      });
+      const res = await axiosInstance.post("/api/user/login", input);
 
       if (res.data.success) {
-        // localStorage.setItem("user", JSON.stringify(res.data.user)); // ✅ ADD THIS
         dispatch(setUser(res.data.user));
         toast.success(res.data.message);
         navigate("/");
       }
     } catch (error) {
+      console.log(error);
       toast.error(error.response?.data?.message || "Login failed");
     } finally {
       dispatch(setLoading(false));
@@ -113,16 +111,16 @@ const Login = () => {
             </label>
           </div>
 
-          {/* Button with Loader */}
+          {/* Button */}
           <button
             disabled={loading}
-            className="w-full bg-[#F83002] hover:bg-red-600 transition text-white py-2 mt-7 rounded-md font-medium flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+            className="w-full bg-[#F83002] hover:bg-red-600 transition text-white py-2 mt-7 rounded-md font-medium flex items-center justify-center gap-2 disabled:opacity-70"
           >
             {loading && <Loader2 className="h-5 w-5 animate-spin" />}
             {loading ? "Please wait..." : "Login"}
           </button>
 
-          {/* Register Link */}
+          {/* Register */}
           <div className="mt-3 text-sm text-center">
             Don't have an account?{" "}
             <Link to="/register" className="text-blue-600 hover:underline">
