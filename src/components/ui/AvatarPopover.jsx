@@ -22,7 +22,6 @@ const AvatarPopover = () => {
         toast.success(res.data.message);
       }
     } catch (error) {
-      console.log(error);
       toast.error(error?.response?.data?.message || "Logout failed");
     }
   };
@@ -39,51 +38,44 @@ const AvatarPopover = () => {
 
   return (
     <div className="relative" ref={popoverRef}>
-      {/* Avatar Toggle */}
       <img
         src={user?.profile?.profilePhoto || "/default-avatar.png"}
         alt="avatar"
-        className="w-9 h-9 rounded-full object-cover cursor-pointer border hover:scale-105 transition"
-        onClick={(e) => {
-          e.stopPropagation();
-          setOpen(!open);
-        }}
+        className="w-10 h-10 rounded-full object-cover cursor-pointer border hover:scale-105 transition"
+        onClick={() => setOpen(!open)}
       />
 
-      {/* Dropdown Menu */}
       {open && (
-        <div className="absolute right-0 mt-3 w-56 bg-white rounded-xl shadow-xl border z-[100] overflow-hidden animate-in fade-in zoom-in duration-200">
-          {/* User Info Section */}
-          <div className="flex items-center gap-3 p-4 border-b bg-gray-50/50">
+        <div className="absolute right-0 mt-3 w-64 bg-white rounded-xl shadow-2xl border z-[100] overflow-hidden animate-in fade-in zoom-in duration-200">
+          <div className="flex items-center gap-3 p-4 border-b bg-gray-50">
             <img
               src={user?.profile?.profilePhoto || "/default-avatar.png"}
               alt="avatar"
-              className="w-10 h-10 rounded-full object-cover border"
+              className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm"
             />
             <div className="truncate">
-              <h1 className="text-sm font-semibold text-gray-800 truncate">
+              <h1 className="text-sm font-bold text-gray-800 truncate">
                 {user?.fullname}
               </h1>
               <p className="text-xs text-gray-500 truncate">{user?.email}</p>
             </div>
           </div>
 
-          {/* Action Buttons */}
-          <div className="p-2 text-sm">
+          <div className="p-2">
             {user?.role === "student" && (
               <Link to="/profile" onClick={() => setOpen(false)}>
-                <div className="flex items-center gap-3 p-2 rounded-md hover:bg-gray-100 cursor-pointer transition">
-                  <MdPerson className="text-lg text-gray-600" />
-                  <span>My Profile</span>
+                <div className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-gray-100 cursor-pointer transition text-gray-700">
+                  <MdPerson className="text-xl text-gray-500" />
+                  <span className="font-medium">My Profile</span>
                 </div>
               </Link>
             )}
 
             <button
               onClick={logoutHandler}
-              className="w-full flex items-center gap-3 p-2 rounded-md hover:bg-red-50 text-red-500 cursor-pointer transition"
+              className="w-full flex items-center gap-3 p-2.5 rounded-lg hover:bg-red-50 text-red-600 cursor-pointer transition mt-1"
             >
-              <MdLogout className="text-lg" />
+              <MdLogout className="text-xl" />
               <span className="font-medium">Logout</span>
             </button>
           </div>
