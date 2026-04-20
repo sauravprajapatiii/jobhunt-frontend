@@ -1,177 +1,141 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import AvatarPopover from "../ui/AvatarPopover";
 import { useSelector } from "react-redux";
 import { Menu, X } from "lucide-react";
+import AvatarPopover from "../ui/AvatarPopover";
 
 const Navbar = () => {
   const { user } = useSelector((store) => store.auth);
   const [open, setOpen] = useState(false);
   const location = useLocation();
 
-  // Active link helper
   const isActive = (path) => location.pathname === path;
 
-  const linkClass = (path) =>
-    isActive(path)
-      ? "text-[#F83002] font-semibold"
-      : "text-gray-700 hover:text-[#F83002]";
+  const navLink = (path) =>
+    `relative transition ${
+      isActive(path) ? "text-[#F83002]" : "text-gray-700 hover:text-[#F83002]"
+    }`;
 
   return (
-    <div className="bg-white shadow-sm">
-      <div className="flex justify-between items-center mx-auto max-w-7xl h-16 px-4 sm:px-6">
+    <header className="sticky top-0 z-50 backdrop-blur bg-white/70 border-b">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         {/* Logo */}
-        <h1 className="text-xl sm:text-2xl font-bold">
-          Job <span className="text-[#F83002]">Portal</span>
-        </h1>
+        <Link to="/" className="text-2xl font-bold tracking-tight">
+          Job<span className="text-[#F83002]">Portal</span>
+        </Link>
 
-        {/* Desktop Links */}
-        <div className="hidden md:block">
-          <ul className="flex gap-8 font-medium items-center">
-            {user && user.role === "recruiter" ? (
-              <>
-                <li>
-                  <Link
-                    to="/admin/companies"
-                    className={linkClass("/admin/companies")}
-                  >
-                    Companies
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/admin/jobs" className={linkClass("/admin/jobs")}>
-                    Jobs
-                  </Link>
-                </li>
-              </>
-            ) : (
-              <>
-                <li>
-                  <Link to="/" className={linkClass("/")}>
-                    Home
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/jobs" className={linkClass("/jobs")}>
-                    Jobs
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/browse" className={linkClass("/browse")}>
-                    Browse
-                  </Link>
-                </li>
-              </>
-            )}
-          </ul>
-        </div>
+        {/* Desktop Nav */}
+        <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
+          {user?.role === "recruiter" ? (
+            <>
+              <Link
+                to="/admin/companies"
+                className={navLink("/admin/companies")}
+              >
+                Companies
+              </Link>
+              <Link to="/admin/jobs" className={navLink("/admin/jobs")}>
+                Jobs
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link to="/" className={navLink("/")}>
+                Home
+              </Link>
+              <Link to="/jobs" className={navLink("/jobs")}>
+                Jobs
+              </Link>
+              <Link to="/browse" className={navLink("/browse")}>
+                Browse
+              </Link>
+            </>
+          )}
+        </nav>
 
         {/* Desktop Right */}
-        <div className="hidden md:block">
+        <div className="hidden md:flex items-center gap-4">
           {user ? (
             <AvatarPopover />
           ) : (
-            <div className="flex gap-4">
+            <>
               <Link to="/login">
-                <button className="px-4 py-2 border rounded-md">Login</button>
+                <button className="px-4 py-2 text-sm border rounded-lg hover:bg-gray-100 transition">
+                  Login
+                </button>
               </Link>
               <Link to="/register">
-                <button className="px-4 py-2 bg-[#F83002] text-white rounded-md">
+                <button className="px-4 py-2 text-sm bg-[#F83002] text-white rounded-lg hover:bg-red-600 transition shadow">
+                  Signup
+                </button>
+              </Link>
+            </>
+          )}
+        </div>
+
+        {/* Mobile Toggle */}
+        <button
+          className="md:hidden p-2 rounded-lg hover:bg-gray-100"
+          onClick={() => setOpen(!open)}
+        >
+          {open ? <X /> : <Menu />}
+        </button>
+      </div>
+
+      {/* Mobile Menu */}
+      <div
+        className={`md:hidden transition-all duration-300 overflow-hidden ${
+          open ? "max-h-[400px] opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
+        <div className="px-6 py-4 bg-white border-t space-y-4">
+          {/* Links */}
+          <div className="flex flex-col gap-3 text-sm font-medium">
+            {user?.role === "recruiter" ? (
+              <>
+                <Link to="/admin/companies" onClick={() => setOpen(false)}>
+                  Companies
+                </Link>
+                <Link to="/admin/jobs" onClick={() => setOpen(false)}>
+                  Jobs
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link to="/" onClick={() => setOpen(false)}>
+                  Home
+                </Link>
+                <Link to="/jobs" onClick={() => setOpen(false)}>
+                  Jobs
+                </Link>
+                <Link to="/browse" onClick={() => setOpen(false)}>
+                  Browse
+                </Link>
+              </>
+            )}
+          </div>
+
+          {/* Divider */}
+          <div className="border-t" />
+
+          {/* Auth */}
+          {user ? (
+            <AvatarPopover />
+          ) : (
+            <div className="flex flex-col gap-3">
+              <Link to="/login" onClick={() => setOpen(false)}>
+                <button className="w-full py-2 border rounded-lg">Login</button>
+              </Link>
+              <Link to="/register" onClick={() => setOpen(false)}>
+                <button className="w-full py-2 bg-[#F83002] text-white rounded-lg shadow">
                   Signup
                 </button>
               </Link>
             </div>
           )}
         </div>
-
-        {/* Mobile Toggle */}
-        <div className="md:hidden">
-          <button onClick={() => setOpen(!open)}>
-            {open ? <X /> : <Menu />}
-          </button>
-        </div>
       </div>
-
-      {/* Mobile Menu */}
-      {open && (
-        <div className="md:hidden px-4 pb-4">
-          <ul className="flex flex-col gap-4 font-medium">
-            {user && user.role === "recruiter" ? (
-              <>
-                <li>
-                  <Link
-                    to="/admin/companies"
-                    className={linkClass("/admin/companies")}
-                    onClick={() => setOpen(false)}
-                  >
-                    Companies
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/admin/jobs"
-                    className={linkClass("/admin/jobs")}
-                    onClick={() => setOpen(false)}
-                  >
-                    Jobs
-                  </Link>
-                </li>
-              </>
-            ) : (
-              <>
-                <li>
-                  <Link
-                    to="/"
-                    className={linkClass("/")}
-                    onClick={() => setOpen(false)}
-                  >
-                    Home
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/jobs"
-                    className={linkClass("/jobs")}
-                    onClick={() => setOpen(false)}
-                  >
-                    Jobs
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/browse"
-                    className={linkClass("/browse")}
-                    onClick={() => setOpen(false)}
-                  >
-                    Browse
-                  </Link>
-                </li>
-              </>
-            )}
-          </ul>
-
-          {/* 🔥 Mobile Auth Section */}
-          <div className="mt-4 border-t pt-4">
-            {user ? (
-              <AvatarPopover />
-            ) : (
-              <div className="flex flex-col gap-3">
-                <Link to="/login" onClick={() => setOpen(false)}>
-                  <button className="w-full px-4 py-2 border rounded-md">
-                    Login
-                  </button>
-                </Link>
-                <Link to="/register" onClick={() => setOpen(false)}>
-                  <button className="w-full px-4 py-2 bg-[#F83002] text-white rounded-md">
-                    Signup
-                  </button>
-                </Link>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-    </div>
+    </header>
   );
 };
 
