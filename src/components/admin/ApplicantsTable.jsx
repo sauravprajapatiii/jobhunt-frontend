@@ -1,13 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
 import axiosInstance from "../../utils/axios";
 
-const shortlistingStatus = ["Accepted", "Rejected"];
+const shortlistingStatus = ["Accept", "Reject"];
 
 const ApplicantsTable = () => {
   const [openIndex, setOpenIndex] = useState(null);
   const { applicants } = useSelector((store) => store.application);
+
+  const applications = applicants?.applications || [];
 
   const statusHandler = async (status, id) => {
     try {
@@ -25,7 +27,18 @@ const ApplicantsTable = () => {
     }
   };
 
-  const applications = applicants?.applications || [];
+  // ✅ close dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = () => {
+      setOpenIndex(null);
+    };
+
+    window.addEventListener("click", handleClickOutside);
+
+    return () => {
+      window.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
 
   return (
     <div className="px-2 sm:px-4 md:px-6">
@@ -71,7 +84,7 @@ const ApplicantsTable = () => {
                       {item?.applicant?.email || "N/A"}
                     </td>
 
-                    {/* Phone */}
+                    {/* Contact */}
                     <td className="px-3 sm:px-4 py-2 text-gray-600 text-xs sm:text-sm">
                       {item?.applicant?.phoneNumber || "N/A"}
                     </td>
@@ -84,35 +97,43 @@ const ApplicantsTable = () => {
                     {/* Action */}
                     <td className="px-3 sm:px-4 py-2 text-right">
                       <div className="relative inline-block">
+                        {/* Button */}
                         <button
-                          onClick={() =>
-                            setOpenIndex(openIndex === idx ? null : idx)
-                          }
-                          className="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs sm:text-sm px-3 py-1 rounded"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setOpenIndex(openIndex === idx ? null : idx);
+                          }}
+                          className="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs sm:text-sm px-3 py-1 rounded-md transition"
                         >
-                          Select
+                          Update
                         </button>
 
-                        {openIndex === idx && (
-                          <div className="absolute right-0 mt-2 w-28 bg-white border rounded shadow-md z-10">
-                            {shortlistingStatus.map((status) => (
-                              <div
-                                key={status}
-                                onClick={() => {
-                                  statusHandler(status, item._id);
-                                  setOpenIndex(null);
-                                }}
-                                className={`px-3 py-2 text-xs sm:text-sm cursor-pointer hover:bg-gray-100 ${
-                                  status === "Accepted"
-                                    ? "text-green-600"
-                                    : "text-red-600"
-                                }`}
-                              >
-                                {status}
-                              </div>
-                            ))}
-                          </div>
-                        )}
+                        {/* Dropdown */}
+                        <div
+                          className={`absolute right-0 mt-2 w-32 bg-white border rounded-lg shadow-lg z-20 transition-all duration-200 origin-top ${
+                            openIndex === idx
+                              ? "scale-100 opacity-100"
+                              : "scale-95 opacity-0 pointer-events-none"
+                          }`}
+                        >
+                          {shortlistingStatus.map((status) => (
+                            <button
+                              key={status}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                statusHandler(status, item._id);
+                                setOpenIndex(null);
+                              }}
+                              className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-100 transition ${
+                                status === "Accept"
+                                  ? "text-green-600"
+                                  : "text-red-600"
+                              }`}
+                            >
+                              {status}
+                            </button>
+                          ))}
+                        </div>
                       </div>
                     </td>
                   </tr>
