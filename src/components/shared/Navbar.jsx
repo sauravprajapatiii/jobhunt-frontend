@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { Menu, X, Briefcase, UserCircle, LogOut } from "lucide-react"; // Added icons
+import { Menu, X, Briefcase, UserCircle, LogOut } from "lucide-react";
 import axiosInstance from "../../utils/axios";
 import { setUser } from "../../redux/authSlice";
 import { toast } from "sonner";
@@ -15,13 +15,23 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  // Helper to check if path is active
   const isActive = (path) => location.pathname === path;
 
-  const navLink = (path) =>
-    `transition ${
+  // Desktop Link Styles
+  const navLinkStyles = (path) =>
+    `transition-colors duration-200 pb-1 border-b-2 ${
       isActive(path)
-        ? "text-[#F83002] font-semibold"
-        : "text-gray-700 hover:text-[#F83002]"
+        ? "text-[#F83002] border-[#F83002] font-bold"
+        : "text-gray-700 border-transparent hover:text-[#F83002]"
+    }`;
+
+  // Mobile Link Styles
+  const mobileNavLinkStyles = (path) =>
+    `flex items-center gap-3 p-3 rounded-lg transition-all ${
+      isActive(path)
+        ? "bg-red-50 text-[#F83002] font-bold shadow-sm"
+        : "text-gray-700 hover:bg-gray-50"
     }`;
 
   const logoutHandler = async () => {
@@ -43,32 +53,32 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
         {/* BRAND */}
         <Link to="/" className="flex items-center gap-2">
-          <Briefcase className="text-[#F83002]" />
+          <Briefcase className="text-[#F83002]" size={28} />
           <span className="text-xl font-bold tracking-tight">
             Talent<span className="text-[#F83002]">Flow</span>
           </span>
         </Link>
 
-        {/* Desktop Nav */}
+        {/* 💻 Desktop Nav */}
         <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
           {user?.role === "recruiter" ? (
             <>
               <Link
                 to="/admin/companies"
-                className={navLink("/admin/companies")}
+                className={navLinkStyles("/admin/companies")}
               >
                 Companies
               </Link>
-              <Link to="/admin/jobs" className={navLink("/admin/jobs")}>
+              <Link to="/admin/jobs" className={navLinkStyles("/admin/jobs")}>
                 Jobs
               </Link>
             </>
           ) : (
             <>
-              <Link to="/" className={navLink("/")}>
+              <Link to="/" className={navLinkStyles("/")}>
                 Home
               </Link>
-              <Link to="/jobs" className={navLink("/jobs")}>
+              <Link to="/jobs" className={navLinkStyles("/jobs")}>
                 Jobs
               </Link>
             </>
@@ -113,7 +123,7 @@ const Navbar = () => {
           className={`absolute top-0 left-0 h-full w-72 bg-white shadow-2xl transform transition-transform duration-300 ease-in-out ${open ? "translate-x-0" : "-translate-x-full"}`}
         >
           <div className="flex items-center justify-between p-4 border-b">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 text-lg">
               <Briefcase className="text-[#F83002]" />
               <span className="font-bold">TalentFlow</span>
             </div>
@@ -125,21 +135,21 @@ const Navbar = () => {
             </button>
           </div>
 
-          <div className="p-4 flex flex-col gap-4 text-sm font-medium">
-            {/* Mobile Navigation Links */}
+          <div className="p-4 flex flex-col gap-2 text-sm font-medium">
+            {/* 🚀 HIGHLIGHTED MOBILE LINKS */}
             {user?.role === "recruiter" ? (
               <>
                 <Link
                   onClick={() => setOpen(false)}
                   to="/admin/companies"
-                  className="py-2 hover:text-[#F83002]"
+                  className={mobileNavLinkStyles("/admin/companies")}
                 >
                   Companies
                 </Link>
                 <Link
                   onClick={() => setOpen(false)}
                   to="/admin/jobs"
-                  className="py-2 hover:text-[#F83002]"
+                  className={mobileNavLinkStyles("/admin/jobs")}
                 >
                   Jobs
                 </Link>
@@ -149,26 +159,25 @@ const Navbar = () => {
                 <Link
                   onClick={() => setOpen(false)}
                   to="/"
-                  className="py-2 hover:text-[#F83002]"
+                  className={mobileNavLinkStyles("/")}
                 >
                   Home
                 </Link>
                 <Link
                   onClick={() => setOpen(false)}
                   to="/jobs"
-                  className="py-2 hover:text-[#F83002]"
+                  className={mobileNavLinkStyles("/jobs")}
                 >
                   Jobs
                 </Link>
               </>
             )}
 
-            <hr className="my-2" />
+            <hr className="my-4" />
 
             {user ? (
               <div className="flex flex-col gap-4">
-                {/* User Info Section */}
-                <div className="flex items-center gap-3 p-2 bg-gray-50 rounded-lg">
+                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                   <img
                     src={user?.profile?.profilePhoto || "/default-avatar.png"}
                     className="w-12 h-12 rounded-full border-2 border-white object-cover shadow-sm"
@@ -184,31 +193,28 @@ const Navbar = () => {
                   </div>
                 </div>
 
-                {/* 🚀 NEW: MOBILE PROFILE LINK */}
+                {/* Mobile Profile Link with Highlight */}
                 {user?.role === "student" && (
                   <Link
                     onClick={() => setOpen(false)}
                     to="/profile"
-                    className="flex items-center gap-3 py-3 px-4 rounded-xl border border-gray-200 hover:bg-gray-50 transition"
+                    className={mobileNavLinkStyles("/profile")}
                   >
-                    <UserCircle size={20} className="text-gray-500" />
-                    <span className="font-semibold text-gray-700">
-                      My Profile
-                    </span>
+                    <UserCircle size={20} />
+                    <span>My Profile</span>
                   </Link>
                 )}
 
-                {/* Mobile Logout */}
                 <button
                   onClick={logoutHandler}
-                  className="flex items-center justify-center gap-2 bg-red-500 text-white py-3 rounded-xl font-bold hover:bg-red-600 transition shadow-md shadow-red-200"
+                  className="flex items-center justify-center gap-2 bg-red-500 text-white py-3 rounded-xl font-bold hover:bg-red-600 transition"
                 >
                   <LogOut size={18} />
                   Logout
                 </button>
               </div>
             ) : (
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-3 mt-4">
                 <Link
                   to="/login"
                   onClick={() => setOpen(false)}
