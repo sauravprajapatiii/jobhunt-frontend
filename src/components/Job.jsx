@@ -17,76 +17,65 @@ const Job = ({ job }) => {
   };
 
   return (
-    <div className="w-full bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition p-4 grid gap-4">
-      {/* Top Row */}
-      <div className="grid grid-cols-2 items-center">
-        <p className="text-xs text-gray-500">
+    <div className="bg-white border rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 p-5 flex flex-col justify-between h-full">
+      {/* Top */}
+      <div className="flex justify-between items-center text-xs text-gray-500">
+        <span>
           {daysAgo(job.createdAt) === 0
             ? "Today"
             : `${daysAgo(job.createdAt)} days ago`}
-        </p>
+        </span>
 
-        <div className="flex justify-end">
-          <button className="p-2 rounded-full hover:bg-gray-100">
-            <Bookmark className="w-4 h-4 sm:w-5 sm:h-5 text-[#7209b7]" />
-          </button>
+        <Bookmark className="w-5 h-5 text-[#7209b7] cursor-pointer" />
+      </div>
+
+      {/* Company */}
+      <div className="flex items-center gap-3 mt-3">
+        <img
+          src={job.company.logo}
+          alt="logo"
+          className="w-10 h-10 rounded-full border object-cover"
+        />
+        <div>
+          <h2 className="font-semibold text-sm">{job.company.name}</h2>
+          <p className="text-xs text-gray-500">{job.location}</p>
         </div>
       </div>
 
-      {/* Company Section */}
-      <div className="grid grid-cols-[auto,1fr] gap-3 items-center">
-        <div className="w-10 h-10 rounded-full border flex items-center justify-center overflow-hidden bg-gray-50">
-          <img
-            src={job.company.logo}
-            alt="logo"
-            className="w-7 h-7 object-cover"
-          />
-        </div>
-
-        <div className="min-w-0">
-          <h1 className="text-sm sm:text-base font-semibold truncate">
-            {job.company.name}
-          </h1>
-          <p className="text-xs sm:text-sm text-gray-500 truncate">
-            {job.location}, India
-          </p>
-        </div>
-      </div>
-
-      {/* Job Info */}
-      <div className="grid gap-1 min-w-0">
-        <h1 className="text-sm sm:text-lg font-bold text-gray-900 truncate">
+      {/* Title */}
+      <div className="mt-3">
+        <h1 className="text-lg font-bold text-gray-800 line-clamp-1">
           {job.title}
         </h1>
-        <p className="text-xs sm:text-sm text-gray-600 line-clamp-2">
+        <p className="text-sm text-gray-600 mt-1 line-clamp-2">
           {job.description}
         </p>
       </div>
 
       {/* Tags */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-        <span className="text-xs px-2 py-1 border rounded-md font-semibold text-blue-700 bg-blue-50 text-center">
+      <div className="flex flex-wrap gap-2 mt-4">
+        <span className="px-3 py-1 text-xs rounded-full bg-blue-100 text-blue-700 font-medium">
           {job.position} Positions
         </span>
-        <span className="text-xs px-2 py-1 flex justify-center items-center border rounded-md font-semibold text-[#F83002] bg-red-50 text-center">
+        <span className="px-3 py-1 text-xs rounded-full bg-red-100 text-red-600 font-medium">
           {job.jobType}
         </span>
-        <span className="text-xs px-2 py-1 flex justify-center items-center border rounded-md  font-semibold text-[#7209b7] bg-purple-50 text-center col-span-2 sm:col-span-1">
+        <span className="px-3 py-1 text-xs rounded-full bg-purple-100 text-purple-700 font-medium">
           {job.salary} LPA
         </span>
       </div>
 
       {/* Buttons */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+      <div className="flex gap-3 mt-5">
         <button
-          onClick={() => navigate(`/description/${jobId}`)}
-          className="w-full text-xs sm:text-sm px-3 py-2 bg-[#F83002] text-white rounded-md hover:bg-white hover:text-black border hover:border-gray-300 transition"
+          onClick={() => navigate(`/description/${job._id}`)}
+          className="flex-1 py-2 text-sm rounded-lg bg-[#F83002] text-white hover:bg-red-600 transition"
         >
-          Details
+          View Details
         </button>
 
-        <button className="w-full text-xs sm:text-sm px-3 py-2 bg-[#7209b7] text-white rounded-md hover:bg-white hover:text-black border hover:border-gray-300 transition">
-          Save for Later
+        <button className="flex-1 py-2 text-sm rounded-lg border hover:bg-gray-100 transition">
+          Save
         </button>
       </div>
     </div>

@@ -69,93 +69,73 @@ const JobDescription = () => {
   }, [jobId, dispatch, user?._id]);
 
   return (
-    <div className="max-w-5xl mx-auto my-10 px-4">
-      <div className="bg-white shadow-xl rounded-2xl p-6 border">
-        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+    <div className="max-w-5xl mx-auto px-4 py-10">
+      <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row justify-between gap-6">
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
               {singleJob?.title}
             </h1>
 
-            <div className="flex flex-wrap gap-3 mt-3">
-              <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-semibold">
+            <div className="flex flex-wrap gap-2 mt-3">
+              <span className="badge blue">
                 {singleJob?.position} Positions
               </span>
-
-              <span className="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-semibold">
-                {singleJob?.jobType}
-              </span>
-
-              <span className="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm font-semibold">
-                {singleJob?.salary} LPA
-              </span>
+              <span className="badge red">{singleJob?.jobType}</span>
+              <span className="badge purple">{singleJob?.salary} LPA</span>
             </div>
           </div>
 
           <button
             onClick={!isApplied ? applyJobHandler : null}
             disabled={isApplied}
-            className={`px-6 py-2 rounded-xl text-white font-semibold transition-all duration-200 ${
-              isApplied
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-black hover:bg-gray-800"
+            className={`px-6 py-3 rounded-xl text-white font-semibold ${
+              isApplied ? "bg-gray-400" : "bg-[#F83002] hover:bg-red-600"
             }`}
           >
             {isApplied ? "Applied ✓" : "Apply Now"}
           </button>
         </div>
 
+        {/* Divider */}
         <div className="border-t my-6"></div>
 
+        {/* Description */}
         <div>
-          <h2 className="text-lg font-semibold text-gray-700 mb-2">
-            Job Description
-          </h2>
+          <h2 className="font-semibold text-lg mb-2">Job Description</h2>
           <p className="text-gray-600 leading-relaxed">
             {singleJob?.description}
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6 mt-6">
+        {/* Info Grid */}
+        <div className="grid md:grid-cols-2 gap-6 mt-6 text-sm">
           <div className="space-y-2">
             <p>
-              <strong className="text-gray-700">Role:</strong>{" "}
-              <span className="text-gray-600">{singleJob?.title}</span>
+              <strong>Role:</strong> {singleJob?.title}
             </p>
-
             <p>
-              <strong className="text-gray-700">Location:</strong>{" "}
-              <span className="text-gray-600">{singleJob?.location}</span>
+              <strong>Location:</strong> {singleJob?.location}
             </p>
-
             <p>
-              <strong className="text-gray-700">Experience:</strong>{" "}
-              <span className="text-gray-600">
-                {singleJob?.experienceLevel} Years
-              </span>
+              <strong>Experience:</strong> {singleJob?.experienceLevel} Years
             </p>
           </div>
 
           <div className="space-y-2">
             <p>
-              <strong className="text-gray-700">Salary:</strong>{" "}
-              <span className="text-gray-600">{singleJob?.salary} LPA</span>
+              <strong>Salary:</strong> {singleJob?.salary} LPA
             </p>
-
             <p>
-              <strong className="text-gray-700">Applicants:</strong>{" "}
-              <span className="text-gray-600">
-                {singleJob?.applications?.length || 0}
-              </span>
+              <strong>Applicants:</strong>{" "}
+              {singleJob?.applications?.length || 0}
             </p>
-
             <p>
-              <strong className="text-gray-700">Posted:</strong>{" "}
-              <span className="text-gray-600">
-                {singleJob?.createdAt
-                  ? new Date(singleJob.createdAt).toLocaleDateString()
-                  : "Loading..."}
-              </span>
+              <strong>Posted:</strong>{" "}
+              {singleJob?.createdAt
+                ? new Date(singleJob.createdAt).toLocaleDateString()
+                : "Loading..."}
             </p>
           </div>
         </div>

@@ -1,19 +1,28 @@
 import React from "react";
 import LatestJobsCard from "./LatestJobsCard";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-const random_job = [1, 2, 3, 4, 5, 6, 7, 8];
+
 const LatestJobs = () => {
   const { allJobs } = useSelector((store) => store.job);
-  const navigate = useNavigate();
+
   return (
-    <div className="max-w-7xl mx-auto my-20 ">
-      <h1 className="text-4xl font-bold text-center">
-        <span className="text-[#6A38C2]">Latest & Top </span> Job Opening
+    <div className="max-w-7xl mx-auto my-16 px-4 sm:px-6">
+      {/* Heading */}
+      <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center">
+        <span className="text-[#6A38C2]">Latest & Top </span> Job Openings
       </h1>
-      <div className="grid grid-cols-3 gap-5 my-5 ">
+
+      {/* Grid */}
+      <div
+        className="grid gap-6 mt-10 
+        grid-cols-1 
+        sm:grid-cols-2 
+        lg:grid-cols-3"
+      >
         {allJobs.length <= 0 ? (
-          <span>No job available</span>
+          <p className="text-center col-span-full text-gray-500">
+            No jobs available
+          </p>
         ) : (
           allJobs
             ?.slice(0, 6)

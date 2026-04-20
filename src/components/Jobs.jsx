@@ -40,39 +40,33 @@ const Jobs = () => {
   console.log("---- Jobs render ----");
   console.log("TYPE:", typeof searchQuery, searchQuery);
   return (
-    <div>
-      <Navbar />
-
-      <div className="max-w-7xl mx-auto px-4 mt-5">
-        {/* Main Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-5">
-          {/* Filter Sidebar */}
-          <div className="lg:col-span-1">
+    <div className="max-w-7xl mx-auto px-4 mt-5">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        {/* Sidebar */}
+        <div className="lg:col-span-1">
+          <div className="lg:sticky top-20">
             <FilterCard />
           </div>
+        </div>
 
-          {/* Jobs Section */}
-          <div className="lg:col-span-3">
-            {filterJobs?.length <= 0 ? (
-              <span>Job not found</span>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-                {filterJobs?.map((job, index) => {
-                  console.log("Mapping job:", job);
-                  return (
-                    <motion.div
-                      initial={{ opacity: 0, x: 100 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -100 }}
-                      transition={{ duration: 0.6 }}
-                    >
-                      <Job key={job._id} job={job} />
-                    </motion.div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
+        {/* Jobs */}
+        <div className="lg:col-span-3">
+          {filterJobs?.length <= 0 ? (
+            <p className="text-center text-gray-500 mt-10">No jobs found</p>
+          ) : (
+            <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+              {filterJobs.map((job) => (
+                <motion.div
+                  key={job._id}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4 }}
+                >
+                  <Job job={job} />
+                </motion.div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
