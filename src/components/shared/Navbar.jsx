@@ -9,7 +9,7 @@ const Navbar = () => {
   const [open, setOpen] = useState(false);
   const location = useLocation();
 
-  // helper function
+  // Active link helper
   const isActive = (path) => location.pathname === path;
 
   const linkClass = (path) =>
@@ -66,7 +66,7 @@ const Navbar = () => {
           </ul>
         </div>
 
-        {/* Right Section Desktop */}
+        {/* Desktop Right */}
         <div className="hidden md:block">
           {user ? (
             <AvatarPopover />
@@ -84,7 +84,7 @@ const Navbar = () => {
           )}
         </div>
 
-        {/* Mobile Menu Button */}
+        {/* Mobile Toggle */}
         <div className="md:hidden">
           <button onClick={() => setOpen(!open)}>
             {open ? <X /> : <Menu />}
@@ -149,6 +149,26 @@ const Navbar = () => {
               </>
             )}
           </ul>
+
+          {/* 🔥 Mobile Auth Section */}
+          <div className="mt-4 border-t pt-4">
+            {user ? (
+              <AvatarPopover />
+            ) : (
+              <div className="flex flex-col gap-3">
+                <Link to="/login" onClick={() => setOpen(false)}>
+                  <button className="w-full px-4 py-2 border rounded-md">
+                    Login
+                  </button>
+                </Link>
+                <Link to="/register" onClick={() => setOpen(false)}>
+                  <button className="w-full px-4 py-2 bg-[#F83002] text-white rounded-md">
+                    Signup
+                  </button>
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>
