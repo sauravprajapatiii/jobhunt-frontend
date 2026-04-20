@@ -16,7 +16,6 @@ const AvatarPopover = () => {
   const logoutHandler = async () => {
     try {
       const res = await axiosInstance.post("/api/user/logout");
-
       if (res.data.success) {
         dispatch(setUser(null));
         navigate("/login");
@@ -24,13 +23,10 @@ const AvatarPopover = () => {
       }
     } catch (error) {
       console.log(error);
-      toast.error(
-        error?.response?.data?.message || "Logout failed. Try again.",
-      );
+      toast.error(error?.response?.data?.message || "Logout failed");
     }
   };
 
-  // close on outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (popoverRef.current && !popoverRef.current.contains(e.target)) {
@@ -43,38 +39,41 @@ const AvatarPopover = () => {
 
   return (
     <div className="relative" ref={popoverRef}>
-      {/* Avatar */}
+      {/* Avatar Toggle */}
       <img
         src={user?.profile?.profilePhoto || "/default-avatar.png"}
         alt="avatar"
-        className="w-10 h-10 rounded-full object-cover cursor-pointer border hover:scale-105 transition"
-        onClick={() => setOpen(!open)}
+        className="w-9 h-9 rounded-full object-cover cursor-pointer border hover:scale-105 transition"
+        onClick={(e) => {
+          e.stopPropagation();
+          setOpen(!open);
+        }}
       />
 
-      {/* Dropdown */}
+      {/* Dropdown Menu */}
       {open && (
-        <div className="absolute right-0 mt-3 w-56 bg-white rounded-xl shadow-xl border z-50 overflow-hidden animate-fadeIn">
-          {/* User Info */}
-          <div className="flex items-center gap-3 p-4 border-b">
+        <div className="absolute right-0 mt-3 w-56 bg-white rounded-xl shadow-xl border z-[100] overflow-hidden animate-in fade-in zoom-in duration-200">
+          {/* User Info Section */}
+          <div className="flex items-center gap-3 p-4 border-b bg-gray-50/50">
             <img
               src={user?.profile?.profilePhoto || "/default-avatar.png"}
               alt="avatar"
-              className="w-10 h-10 rounded-full object-cover"
+              className="w-10 h-10 rounded-full object-cover border"
             />
-            <div>
-              <h1 className="text-sm font-semibold text-gray-800">
+            <div className="truncate">
+              <h1 className="text-sm font-semibold text-gray-800 truncate">
                 {user?.fullname}
               </h1>
-              <p className="text-xs text-gray-500">{user?.email}</p>
+              <p className="text-xs text-gray-500 truncate">{user?.email}</p>
             </div>
           </div>
 
-          {/* Menu */}
+          {/* Action Buttons */}
           <div className="p-2 text-sm">
             {user?.role === "student" && (
               <Link to="/profile" onClick={() => setOpen(false)}>
-                <div className="flex items-center gap-3 p-2 rounded-md hover:bg-gray-100 cursor-pointer">
-                  <MdPerson className="text-lg" />
+                <div className="flex items-center gap-3 p-2 rounded-md hover:bg-gray-100 cursor-pointer transition">
+                  <MdPerson className="text-lg text-gray-600" />
                   <span>My Profile</span>
                 </div>
               </Link>
@@ -82,10 +81,10 @@ const AvatarPopover = () => {
 
             <button
               onClick={logoutHandler}
-              className="w-full flex items-center gap-3 p-2 rounded-md hover:bg-red-50 text-red-500 cursor-pointer"
+              className="w-full flex items-center gap-3 p-2 rounded-md hover:bg-red-50 text-red-500 cursor-pointer transition"
             >
               <MdLogout className="text-lg" />
-              Logout
+              <span className="font-medium">Logout</span>
             </button>
           </div>
         </div>
