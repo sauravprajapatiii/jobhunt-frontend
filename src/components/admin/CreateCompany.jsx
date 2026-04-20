@@ -8,15 +8,21 @@ import { toast } from "sonner";
 
 const CreateCompany = () => {
   const navigate = useNavigate();
-  const [companyName, setCompanyName] = useState("");
   const dispatch = useDispatch();
 
+  const [companyName, setCompanyName] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const registerNewCompany = async () => {
+    if (loading) return;
+
     if (!companyName.trim()) {
       return toast.error("Company name is required");
     }
 
     try {
+      setLoading(true);
+
       const res = await axiosInstance.post(
         "/api/company/register",
         { companyName },
@@ -29,54 +35,66 @@ const CreateCompany = () => {
         dispatch(setSingleCompany(res.data.company));
         toast.success(res.data.message);
 
-        const companyId = res.data.company._id;
-        navigate(`/admin/companies/${companyId}`);
+        navigate(`/admin/companies/${res.data.company._id}`);
       }
     } catch (error) {
       console.log(error);
       toast.error(error?.response?.data?.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ✅ allow Enter key submit
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      registerNewCompany();
     }
   };
 
   return (
-    <div>
+    <div className="bg-gray-50 min-h-screen">
       <Navbar />
 
-      <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 md:px-8 my-6 sm:my-10">
+      <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 md:px-8 my-8 sm:my-12">
         {/* Heading */}
-        <div className="my-6 sm:my-10 text-center sm:text-left">
+        <div className="mb-6 text-center sm:text-left">
           <h1 className="font-bold text-lg sm:text-xl">Your Company Name</h1>
           <p className="text-xs sm:text-sm text-gray-500 mt-1">
             What would you like to name your company? You can change it later.
           </p>
         </div>
 
-        {/* Form */}
+        {/* Input */}
         <div className="flex flex-col">
-          <label className="text-sm">Company Name</label>
+          <label className="text-sm font-medium">Company Name</label>
 
           <input
             type="text"
-            className="my-2 border border-gray-300 py-2 px-2 rounded-md text-sm w-full"
+            className="my-2 border border-gray-300 py-2 px-3 rounded-md text-sm w-full focus:outline-none focus:ring-2 focus:ring-black transition"
             placeholder="JobHunt, Microsoft, etc."
             value={companyName}
             onChange={(e) => setCompanyName(e.target.value)}
+            onKeyDown={handleKeyDown}
+            disabled={loading}
           />
 
           {/* Buttons */}
           <div className="flex flex-col sm:flex-row gap-3 mt-5">
             <button
-              className="border px-4 py-2 rounded-md w-full sm:w-auto"
+              className="border px-4 py-2 rounded-md w-full sm:w-auto hover:bg-gray-100 transition disabled:opacity-50"
               onClick={() => navigate("/admin/companies")}
+              disabled={loading}
             >
               Cancel
             </button>
 
             <button
-              className="border px-4 py-2 rounded-md bg-black text-white w-full sm:w-auto"
+              className="border px-4 py-2 rounded-md bg-black text-white w-full sm:w-auto flex items-center justify-center gap-2 disabled:opacity-60"
               onClick={registerNewCompany}
+              disabled={loading || !companyName.trim()}
             >
-              Continue
+              {loading ? "Creating..." : "Continue"}
             </button>
           </div>
         </div>

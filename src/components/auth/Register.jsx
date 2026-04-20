@@ -31,15 +31,12 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (loading) return;
 
     const formData = new FormData();
-    formData.append("fullname", input.fullname);
-    formData.append("email", input.email);
-    formData.append("phoneNumber", input.phoneNumber);
-    formData.append("role", input.role);
-    formData.append("password", input.password);
+    Object.keys(input).forEach((key) => {
+      if (key !== "file") formData.append(key, input[key]);
+    });
 
     if (input.file) {
       formData.append("profilePhoto", input.file);
@@ -55,11 +52,8 @@ const Register = () => {
       if (res.data.success) {
         toast.success(res.data.message);
         navigate("/login");
-      } else {
-        toast.error(res.data.message);
       }
     } catch (error) {
-      console.log(error);
       toast.error(error.response?.data?.message || "Registration failed");
     } finally {
       dispatch(setLoading(false));
@@ -67,95 +61,113 @@ const Register = () => {
   };
 
   return (
-    <div>
+    <div className="bg-gray-50 min-h-screen">
       <Navbar />
 
-      <div className="flex justify-center items-center max-w-7xl mx-auto min-h-screen">
+      <div className="flex justify-center items-center px-4 py-10">
         <form
           onSubmit={handleSubmit}
-          className="w-1/2 border border-gray-200 rounded-md p-6 shadow-sm"
+          className="w-full max-w-md bg-white rounded-2xl shadow-lg p-6 sm:p-8"
         >
-          <h1 className="font-bold text-xl mb-5 text-center">Register</h1>
+          <h1 className="text-2xl font-bold text-center mb-6">
+            Create Account 🚀
+          </h1>
 
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            className="w-full border p-2 mb-3 rounded"
-            value={input.email}
-            onChange={handleChange}
-            disabled={loading}
-          />
+          {/* Inputs */}
+          <div className="space-y-4">
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              className="w-full border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F83002]"
+              value={input.email}
+              onChange={handleChange}
+              disabled={loading}
+            />
 
-          <input
-            type="text"
-            name="fullname"
-            placeholder="Full Name"
-            className="w-full border p-2 mb-3 rounded"
-            value={input.fullname}
-            onChange={handleChange}
-            disabled={loading}
-          />
+            <input
+              type="text"
+              name="fullname"
+              placeholder="Full Name"
+              className="w-full border p-3 rounded-lg focus:ring-2 focus:ring-[#F83002]"
+              value={input.fullname}
+              onChange={handleChange}
+              disabled={loading}
+            />
 
-          <input
-            type="tel"
-            name="phoneNumber"
-            placeholder="Phone Number"
-            className="w-full border p-2 mb-3 rounded"
-            value={input.phoneNumber}
-            onChange={handleChange}
-            disabled={loading}
-          />
+            <input
+              type="tel"
+              name="phoneNumber"
+              placeholder="Phone Number"
+              className="w-full border p-3 rounded-lg focus:ring-2 focus:ring-[#F83002]"
+              value={input.phoneNumber}
+              onChange={handleChange}
+              disabled={loading}
+            />
 
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            className="w-full border p-2 mb-3 rounded"
-            value={input.password}
-            onChange={handleChange}
-            disabled={loading}
-          />
-
-          <div className="flex gap-4 mb-3">
-            <label>
-              <input
-                type="radio"
-                name="role"
-                value="student"
-                onChange={handleChange}
-                checked={input.role === "student"}
-                disabled={loading}
-              />
-              Student
-            </label>
-
-            <label>
-              <input
-                type="radio"
-                name="role"
-                value="recruiter"
-                onChange={handleChange}
-                checked={input.role === "recruiter"}
-                disabled={loading}
-              />
-              Recruiter
-            </label>
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              className="w-full border p-3 rounded-lg focus:ring-2 focus:ring-[#F83002]"
+              value={input.password}
+              onChange={handleChange}
+              disabled={loading}
+            />
           </div>
 
-          <input type="file" onChange={handleFile} disabled={loading} />
+          {/* Role */}
+          <div className="mt-5">
+            <p className="text-sm font-medium mb-2">Select Role</p>
+            <div className="flex gap-6">
+              {["student", "recruiter"].map((role) => (
+                <label
+                  key={role}
+                  className="flex items-center gap-2 cursor-pointer"
+                >
+                  <input
+                    type="radio"
+                    name="role"
+                    value={role}
+                    checked={input.role === role}
+                    onChange={handleChange}
+                    disabled={loading}
+                  />
+                  <span className="capitalize">{role}</span>
+                </label>
+              ))}
+            </div>
+          </div>
 
+          {/* File Upload */}
+          <div className="mt-5">
+            <label className="text-sm font-medium">
+              Profile Photo (optional)
+            </label>
+            <input
+              type="file"
+              onChange={handleFile}
+              disabled={loading}
+              className="mt-2 text-sm"
+            />
+          </div>
+
+          {/* Button */}
           <button
             disabled={loading}
-            className="w-full bg-[#F83002] text-white py-2 mt-4 rounded flex items-center justify-center gap-2 disabled:opacity-70"
+            className="w-full bg-[#F83002] text-white py-3 mt-6 rounded-lg flex items-center justify-center gap-2 hover:bg-red-600 transition disabled:opacity-70"
           >
             {loading && <Loader2 className="h-5 w-5 animate-spin" />}
             {loading ? "Registering..." : "Register"}
           </button>
 
-          <div className="mt-3 text-center">
-            <Link to="/login">Already have an account?</Link>
-          </div>
+          {/* Login Link */}
+          <p className="text-center text-sm mt-4">
+            Already have an account?{" "}
+            <Link to="/login" className="text-[#F83002] font-medium">
+              Login
+            </Link>
+          </p>
         </form>
       </div>
     </div>

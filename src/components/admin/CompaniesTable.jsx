@@ -7,22 +7,22 @@ const CompaniesTable = () => {
   const { companies, searchCompanyByText } = useSelector(
     (store) => store.company,
   );
+
   const navigate = useNavigate();
-  const [filterCompany, setFilterCompany] = useState(companies);
+  const [filterCompany, setFilterCompany] = useState([]);
 
   useEffect(() => {
-    const filteredCompany =
-      companies.length >= 0 &&
-      companies.filter((company) => {
-        if (!searchCompanyByText) {
-          return true;
-        }
-        return company?.name
-          ?.toLowerCase()
-          .includes(searchCompanyByText.toLowerCase());
-      });
+    if (!companies) return;
 
-    setFilterCompany(filteredCompany);
+    const filtered = companies.filter((company) => {
+      if (!searchCompanyByText) return true;
+
+      return company?.name
+        ?.toLowerCase()
+        .includes(searchCompanyByText.toLowerCase());
+    });
+
+    setFilterCompany(filtered);
   }, [companies, searchCompanyByText]);
 
   return (
@@ -30,10 +30,10 @@ const CompaniesTable = () => {
       <div className="bg-white shadow-md rounded-lg overflow-hidden">
         {/* Header */}
         <h2 className="text-lg sm:text-xl font-semibold p-4 border-b text-center sm:text-left">
-          A List of your registered companies
+          Your Registered Companies
         </h2>
 
-        {/* Table Wrapper for horizontal scroll */}
+        {/* Table */}
         <div className="overflow-x-auto">
           <table className="min-w-[500px] w-full text-sm text-left">
             <thead className="bg-gray-100 text-gray-600 uppercase text-xs">
@@ -48,18 +48,21 @@ const CompaniesTable = () => {
             <tbody className="divide-y">
               {filterCompany?.length === 0 ? (
                 <tr>
-                  <td colSpan="4" className="text-center py-6 text-gray-500">
-                    You have not registered any company yet.
+                  <td
+                    colSpan={4}
+                    className="text-center py-8 text-gray-500 text-sm"
+                  >
+                    No companies found. Start by creating one 🚀
                   </td>
                 </tr>
               ) : (
-                filterCompany?.map((company, index) => (
-                  <tr key={index} className="hover:bg-gray-50 transition">
+                filterCompany.map((company) => (
+                  <tr key={company._id} className="hover:bg-gray-50 transition">
                     {/* Logo */}
                     <td className="px-3 sm:px-4 py-2">
                       <img
                         src={company.logo}
-                        alt="logo"
+                        alt={company.name}
                         className="w-8 h-8 sm:w-10 sm:h-10 object-cover rounded-md border"
                       />
                     </td>
@@ -75,14 +78,15 @@ const CompaniesTable = () => {
                     </td>
 
                     {/* Action */}
-                    <td className="px-3 sm:px-6 py-2 text-right">
-                      <div
+                    <td className="px-3 sm:px-4 py-2 text-right">
+                      <button
                         onClick={() =>
                           navigate(`/admin/companies/${company._id}`)
                         }
+                        className="inline-flex items-center justify-end p-2 rounded-md hover:bg-gray-100"
                       >
-                        <Edit2 className="w-4 h-4 inline-block cursor-pointer text-gray-600 hover:text-blue-600" />
-                      </div>
+                        <Edit2 className="w-4 h-4 text-gray-600 hover:text-blue-600" />
+                      </button>
                     </td>
                   </tr>
                 ))

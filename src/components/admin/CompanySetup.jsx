@@ -9,8 +9,12 @@ import useGetCompanyById from "../../hooks/useGetCompanyById";
 
 const CompanySetup = () => {
   const params = useParams();
+  const navigate = useNavigate();
 
   useGetCompanyById(params.id);
+
+  const { singleCompany } = useSelector((store) => store.company);
+  const [loading, setLoading] = useState(false);
 
   const [input, setInput] = useState({
     name: "",
@@ -19,10 +23,6 @@ const CompanySetup = () => {
     location: "",
     file: null,
   });
-
-  const { singleCompany } = useSelector((store) => store.company);
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
@@ -34,19 +34,21 @@ const CompanySetup = () => {
   };
 
   useEffect(() => {
-    if (singleCompany) {
-      setInput({
-        name: singleCompany.name || "",
-        description: singleCompany.description || "",
-        website: singleCompany.website || "",
-        location: singleCompany.location || "",
-        file: null,
-      });
-    }
+    if (!singleCompany) return;
+
+    setInput({
+      name: singleCompany.name || "",
+      description: singleCompany.description || "",
+      website: singleCompany.website || "",
+      location: singleCompany.location || "",
+      file: null,
+    });
   }, [singleCompany]);
 
   const submitHandler = async (e) => {
     e.preventDefault();
+
+    if (loading) return;
 
     const formData = new FormData();
     formData.append("name", input.name);
@@ -82,10 +84,10 @@ const CompanySetup = () => {
   };
 
   return (
-    <div>
+    <div className="bg-gray-50 min-h-screen">
       <Navbar />
 
-      <div className="w-full max-w-xl px-4 sm:px-6 md:px-8 mx-auto my-6 sm:my-10">
+      <div className="w-full max-w-xl mx-auto px-4 sm:px-6 md:px-8 my-8 sm:my-12">
         <form
           onSubmit={submitHandler}
           className="bg-white shadow-md rounded-lg p-4 sm:p-6"
@@ -95,10 +97,10 @@ const CompanySetup = () => {
             <button
               type="button"
               onClick={() => navigate("/admin/companies")}
-              className="flex items-center gap-2 text-gray-500 font-semibold border border-gray-300 rounded-md px-3 py-1 w-fit"
+              className="flex items-center gap-2 text-gray-600 font-medium border border-gray-300 rounded-md px-3 py-1 w-fit hover:bg-gray-100 transition"
             >
-              <ArrowLeft />
-              <span>Back</span>
+              <ArrowLeft className="h-4 w-4" />
+              Back
             </button>
 
             <h1 className="font-bold text-lg sm:text-xl text-center sm:text-right">
@@ -106,55 +108,46 @@ const CompanySetup = () => {
             </h1>
           </div>
 
-          {/* Form */}
+          {/* Inputs */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <input
-              className="border px-2 py-2 rounded-md text-sm"
-              type="text"
-              name="name"
-              placeholder="Company Name"
-              value={input.name}
-              onChange={handleChange}
-            />
+            {[
+              { name: "name", placeholder: "Company Name" },
+              { name: "description", placeholder: "Description" },
+              { name: "website", placeholder: "Website" },
+              { name: "location", placeholder: "Location" },
+            ].map((field, i) => (
+              <input
+                key={i}
+                className="border px-3 py-2 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-black transition"
+                type="text"
+                name={field.name}
+                placeholder={field.placeholder}
+                value={input[field.name]}
+                onChange={handleChange}
+              />
+            ))}
 
-            <input
-              className="border px-2 py-2 rounded-md text-sm"
-              type="text"
-              name="description"
-              placeholder="Description"
-              value={input.description}
-              onChange={handleChange}
-            />
+            {/* File Upload */}
+            <div className="sm:col-span-2">
+              <label className="block text-sm font-medium mb-1">
+                Company Logo
+              </label>
 
-            <input
-              className="border px-2 py-2 rounded-md text-sm"
-              type="text"
-              name="website"
-              placeholder="Website"
-              value={input.website}
-              onChange={handleChange}
-            />
-
-            <input
-              className="border px-2 py-2 rounded-md text-sm"
-              type="text"
-              name="location"
-              placeholder="Location"
-              value={input.location}
-              onChange={handleChange}
-            />
-
-            <input
-              className="sm:col-span-2 text-sm"
-              type="file"
-              accept="image/*"
-              onChange={fileHandle}
-            />
+              <input
+                type="file"
+                accept="image/*"
+                onChange={fileHandle}
+                className="w-full text-sm border p-2 rounded-md"
+              />
+            </div>
           </div>
 
           {/* Button */}
           <div className="mt-6">
-            <button className="bg-black text-white px-4 py-2 rounded-md w-full flex items-center justify-center gap-2">
+            <button
+              disabled={loading}
+              className="bg-black text-white px-4 py-2 rounded-md w-full flex items-center justify-center gap-2 disabled:opacity-60"
+            >
               {loading && <Loader2 className="h-4 w-4 animate-spin" />}
               {loading ? "Please wait..." : "Update"}
             </button>

@@ -25,7 +25,6 @@ const EditJob = () => {
 
   const { companies } = useSelector((store) => store.company);
 
-  // ✅ Fetch existing job
   useEffect(() => {
     const fetchJob = async () => {
       try {
@@ -37,8 +36,16 @@ const EditJob = () => {
           const job = res.data.job;
 
           setInput({
-            ...job,
-            requirements: job.requirements?.join(",") || "",
+            title: job.title || "",
+            description: job.description || "",
+            requirements: Array.isArray(job.requirements)
+              ? job.requirements.join(", ")
+              : job.requirements || "",
+            salary: job.salary || "",
+            location: job.location || "",
+            jobType: job.jobType || "",
+            experienceLevel: job.experienceLevel || "",
+            position: job.position || 0,
             company: job.company?._id || job.company || "",
           });
         }
@@ -59,9 +66,10 @@ const EditJob = () => {
     setInput({ ...input, company: e.target.value });
   };
 
-  // ✅ Update handler
   const handleUpdate = async (e) => {
     e.preventDefault();
+
+    if (loading) return;
 
     try {
       setLoading(true);
@@ -86,14 +94,16 @@ const EditJob = () => {
     <div className="bg-gray-50 min-h-screen">
       <Navbar />
 
-      <div className="flex justify-center items-center px-4 py-8">
+      <div className="flex justify-center items-center px-4 py-10">
         <form
           onSubmit={handleUpdate}
-          className="max-w-4xl bg-white shadow-lg rounded-2xl p-6"
+          className="w-full max-w-4xl bg-white shadow-lg rounded-2xl p-4 sm:p-6"
         >
-          <h2 className="text-2xl font-bold mb-6 text-gray-800">Edit Job</h2>
+          <h2 className="text-xl sm:text-2xl font-bold mb-6 text-gray-800">
+            Edit Job
+          </h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
             {[
               { label: "Title", name: "title", type: "text" },
               { label: "Description", name: "description", type: "text" },
@@ -117,7 +127,7 @@ const EditJob = () => {
                   name={field.name}
                   value={input[field.name] || ""}
                   onChange={handleInput}
-                  className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black transition"
+                  className="border border-gray-300 rounded-lg px-3 py-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-black transition"
                 />
               </div>
             ))}
@@ -125,15 +135,16 @@ const EditJob = () => {
 
           {/* Company Select */}
           {companies?.length > 0 && (
-            <div className="mt-4">
+            <div className="mt-5">
               <label className="text-sm font-medium text-gray-700 mb-1 block">
                 Select Company
               </label>
+
               <select
                 onChange={selectChangeHandler}
                 name="company"
                 value={input.company}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black transition"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-black transition"
               >
                 <option value="">-- Select Company --</option>
 
@@ -146,8 +157,12 @@ const EditJob = () => {
             </div>
           )}
 
+          {/* Button */}
           <div className="mt-6">
-            <button className="bg-black text-white px-4 py-2 rounded-md w-full flex items-center justify-center gap-2">
+            <button
+              disabled={loading}
+              className="bg-black text-white px-4 py-2 rounded-md w-full flex items-center justify-center gap-2 disabled:opacity-60"
+            >
               {loading && <Loader2 className="h-4 w-4 animate-spin" />}
               {loading ? "Please wait..." : "Update Job"}
             </button>

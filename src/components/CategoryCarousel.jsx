@@ -8,16 +8,18 @@ const CategoryCarousel = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const scrollRef = useRef();
+
   const searchJobHandler = (query) => {
     dispatch(setSearchQuery(query));
     navigate("/browse");
   };
+
   const scrollLeft = () => {
-    scrollRef.current.scrollBy({ left: -200, behavior: "smooth" });
+    scrollRef.current.scrollBy({ left: -250, behavior: "smooth" });
   };
 
   const scrollRight = () => {
-    scrollRef.current.scrollBy({ left: 200, behavior: "smooth" });
+    scrollRef.current.scrollBy({ left: 250, behavior: "smooth" });
   };
 
   const categories = [
@@ -29,25 +31,27 @@ const CategoryCarousel = () => {
   ];
 
   return (
-    <div className="relative w-full max-w-3xl mx-auto mt-10">
+    <div className="relative w-full max-w-5xl mx-auto mt-10 px-4">
       {/* Left Button */}
       <button
         onClick={scrollLeft}
-        className="absolute left-0 top-1/2 -translate-y-1/2 bg-white shadow p-2 rounded-full z-10"
+        className="hidden sm:flex absolute left-2 top-1/2 -translate-y-1/2 bg-white shadow-md p-2 rounded-full z-10 hover:bg-gray-100"
       >
-        <ChevronLeft />
+        <ChevronLeft size={20} />
       </button>
 
       {/* Scroll Container */}
       <div
         ref={scrollRef}
-        className="flex gap-4 overflow-x-auto scrollbar-hide px-10"
+        className="flex gap-3 sm:gap-4 overflow-x-auto scrollbar-hide px-2 sm:px-10 py-2"
       >
         {categories.map((cat, index) => (
           <div
             key={index}
             onClick={() => searchJobHandler(cat)}
-            className="w-[180px] text-center bg-gray-100 hover:bg-[#F83002] whitespace-nowrap hover:text-white cursor-pointer px-4  py-2 rounded-full transition"
+            className="flex-shrink-0 text-center bg-gray-100 hover:bg-[#F83002] hover:text-white 
+                       cursor-pointer px-4 sm:px-5 py-2 sm:py-3 rounded-full 
+                       text-sm sm:text-base font-medium transition whitespace-nowrap"
           >
             {cat}
           </div>
@@ -57,9 +61,9 @@ const CategoryCarousel = () => {
       {/* Right Button */}
       <button
         onClick={scrollRight}
-        className="absolute right-0 top-1/2 -translate-y-1/2 bg-white shadow p-2 rounded-full z-10"
+        className="hidden sm:flex absolute right-2 top-1/2 -translate-y-1/2 bg-white shadow-md p-2 rounded-full z-10 hover:bg-gray-100"
       >
-        <ChevronRight />
+        <ChevronRight size={20} />
       </button>
     </div>
   );
