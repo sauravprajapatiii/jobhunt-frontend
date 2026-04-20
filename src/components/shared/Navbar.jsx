@@ -42,15 +42,10 @@ const Navbar = () => {
     <header className="sticky top-0 z-50 bg-white border-b shadow-sm">
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
         {/* 🧠 BRAND (Logo + Name) */}
-        <Link
-          to="D:\Project_FULL\JOB_PORTAL\frontend\src\assets\logo.png"
-          className="flex items-center gap-2"
-        >
-          <img
-            src=""
-            alt="talentflow Logo"
-            className="w-8 h-8 object-contain"
-          />
+        <Link to="/" className="flex items-center gap-2">
+          <Briefcase className="text-[#F83002]" />
+
+          {/* <img src="" alt="talentflow Logo" className="w-8 h-8 object-contain" /> */}
 
           <span className="text-xl font-bold tracking-tight">
             Talent<span className="text-[#F83002]">Flow</span>
@@ -142,7 +137,7 @@ const Navbar = () => {
             <div className="flex items-center gap-2">
               <Briefcase className="text-[#F83002]" />
               <span className="font-bold">
-                Hire<span className="text-[#F83002]">Hub</span>
+                Talent<span className="text-[#F83002]">Flow</span>
               </span>
             </div>
 
