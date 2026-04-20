@@ -74,9 +74,9 @@ const Navbar = () => {
               <Link to="/jobs" className={navLink("/jobs")}>
                 Jobs
               </Link>
-              <Link to="/browse" className={navLink("/browse")}>
+              {/* <Link to="/browse" className={navLink("/browse")}>
                 Browse
-              </Link>
+              </Link> */}
             </>
           )}
         </nav>
