@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { Menu, X } from "lucide-react";
-import AvatarPopover from "../ui/AvatarPopover";
+import { Menu, X, Briefcase } from "lucide-react";
 import axiosInstance from "../../utils/axios";
 import { setUser } from "../../redux/authSlice";
 import { toast } from "sonner";
@@ -17,13 +16,12 @@ const Navbar = () => {
   const isActive = (path) => location.pathname === path;
 
   const navLink = (path) =>
-    `relative transition ${
+    `transition ${
       isActive(path)
         ? "text-[#F83002] font-semibold"
         : "text-gray-700 hover:text-[#F83002]"
     }`;
 
-  // ✅ Logout Handler
   const logoutHandler = async () => {
     try {
       const res = await axiosInstance.post("/api/user/logout");
@@ -41,14 +39,25 @@ const Navbar = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 backdrop-blur bg-white/80 border-b shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-        {/* 🔥 Logo */}
-        <Link to="/" className="text-2xl font-bold tracking-tight">
-          Job<span className="text-[#F83002]">Portal</span>
+    <header className="sticky top-0 z-50 bg-white border-b shadow-sm">
+      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+        {/* 🧠 BRAND (Logo + Name) */}
+        <Link
+          to="D:\Project_FULL\JOB_PORTAL\frontend\src\assets\logo.png"
+          className="flex items-center gap-2"
+        >
+          <img
+            src=""
+            alt="talentflow Logo"
+            className="w-8 h-8 object-contain"
+          />
+
+          <span className="text-xl font-bold tracking-tight">
+            Talent<span className="text-[#F83002]">Flow</span>
+          </span>
         </Link>
 
-        {/* ✅ Desktop Nav */}
+        {/* 💻 Desktop Nav */}
         <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
           {user?.role === "recruiter" ? (
             <>
@@ -77,19 +86,24 @@ const Navbar = () => {
           )}
         </nav>
 
-        {/* ✅ Desktop Right */}
+        {/* 👤 Desktop Auth */}
         <div className="hidden md:flex items-center gap-4">
           {user ? (
-            <AvatarPopover />
+            <img
+              src={user?.profile?.profilePhoto}
+              alt="avatar"
+              className="w-9 h-9 rounded-full border cursor-pointer"
+            />
           ) : (
             <>
               <Link to="/login">
-                <button className="px-4 py-2 text-sm border rounded-lg hover:bg-gray-100 transition">
+                <button className="px-4 py-2 text-sm border rounded-lg hover:bg-gray-100">
                   Login
                 </button>
               </Link>
+
               <Link to="/register">
-                <button className="px-4 py-2 text-sm bg-[#F83002] text-white rounded-lg hover:bg-red-600 transition shadow">
+                <button className="px-4 py-2 text-sm bg-[#F83002] text-white rounded-lg hover:bg-red-600">
                   Signup
                 </button>
               </Link>
@@ -97,95 +111,104 @@ const Navbar = () => {
           )}
         </div>
 
-        {/* 📱 Mobile Toggle */}
-        <button
-          className="md:hidden p-2 rounded-lg hover:bg-gray-100"
-          onClick={() => setOpen(!open)}
-        >
-          {open ? <X /> : <Menu />}
+        {/* 📱 Mobile Button */}
+        <button className="md:hidden" onClick={() => setOpen(true)}>
+          <Menu />
         </button>
       </div>
 
-      {/* 📱 Mobile Menu */}
+      {/* 📱 MOBILE SIDE DRAWER */}
       <div
-        className={`md:hidden transition-all duration-300 overflow-hidden ${
-          open ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+        className={`fixed inset-0 z-50 transition ${
+          open ? "visible" : "invisible"
         }`}
       >
-        <div className="px-6 py-4 bg-white border-t space-y-4">
-          {/* 🔗 Links */}
-          <div className="flex flex-col gap-3 text-sm font-medium">
+        {/* overlay */}
+        <div
+          className={`absolute inset-0 bg-black/40 transition-opacity ${
+            open ? "opacity-100" : "opacity-0"
+          }`}
+          onClick={() => setOpen(false)}
+        />
+
+        {/* sidebar */}
+        <div
+          className={`absolute top-0 left-0 h-full w-72 bg-white shadow-lg transform transition-transform duration-300 ${
+            open ? "translate-x-0" : "-translate-x-full"
+          }`}
+        >
+          {/* header */}
+          <div className="flex items-center justify-between p-4 border-b">
+            <div className="flex items-center gap-2">
+              <Briefcase className="text-[#F83002]" />
+              <span className="font-bold">
+                Hire<span className="text-[#F83002]">Hub</span>
+              </span>
+            </div>
+
+            <button onClick={() => setOpen(false)}>
+              <X />
+            </button>
+          </div>
+
+          {/* links */}
+          <div className="p-4 flex flex-col gap-4 text-sm font-medium">
             {user?.role === "recruiter" ? (
               <>
-                <Link to="/admin/companies" onClick={() => setOpen(false)}>
+                <Link onClick={() => setOpen(false)} to="/admin/companies">
                   Companies
                 </Link>
-                <Link to="/admin/jobs" onClick={() => setOpen(false)}>
+                <Link onClick={() => setOpen(false)} to="/admin/jobs">
                   Jobs
                 </Link>
               </>
             ) : (
               <>
-                <Link to="/" onClick={() => setOpen(false)}>
+                <Link onClick={() => setOpen(false)} to="/">
                   Home
                 </Link>
-                <Link to="/jobs" onClick={() => setOpen(false)}>
+                <Link onClick={() => setOpen(false)} to="/jobs">
                   Jobs
                 </Link>
-                <Link to="/browse" onClick={() => setOpen(false)}>
+                <Link onClick={() => setOpen(false)} to="/browse">
                   Browse
                 </Link>
               </>
             )}
-          </div>
 
-          <div className="border-t" />
+            <hr />
 
-          {/* 👤 Auth Section */}
-          {user ? (
-            <div className="flex flex-col gap-3">
-              {/* User Info */}
-              <div className="flex items-center gap-3">
-                <img
-                  src={user?.profile?.profilePhoto}
-                  alt="avatar"
-                  className="w-10 h-10 rounded-full border"
-                />
-                <div>
-                  <p className="font-semibold text-sm">{user?.fullname}</p>
-                  <p className="text-xs text-gray-500">{user?.email}</p>
+            {user ? (
+              <>
+                <div className="flex items-center gap-2">
+                  <img
+                    src={user?.profile?.profilePhoto}
+                    className="w-10 h-10 rounded-full border"
+                  />
+                  <div>
+                    <p className="font-semibold">{user?.fullname}</p>
+                    <p className="text-xs text-gray-500">{user?.email}</p>
+                  </div>
                 </div>
-              </div>
 
-              {/* Profile */}
-              {user?.role === "student" && (
-                <Link to="/profile" onClick={() => setOpen(false)}>
-                  <button className="w-full py-2 border rounded-lg hover:bg-gray-100">
-                    Profile
-                  </button>
-                </Link>
-              )}
-
-              {/* Logout */}
-              <button
-                onClick={logoutHandler}
-                className="w-full py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
-              >
-                Logout
-              </button>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-3">
-              <Link to="/login" onClick={() => setOpen(false)}>
-                <button className="w-full py-2 border rounded-lg">Login</button>
-              </Link>
-              <Link to="/register" onClick={() => setOpen(false)}>
-                <button className="w-full py-2 bg-[#F83002] text-white rounded-lg shadow">
-                  Signup
+                <button
+                  onClick={logoutHandler}
+                  className="bg-red-500 text-white py-2 rounded-lg"
+                >
+                  Logout
                 </button>
-              </Link>
-            </div>
-          )}
+              </>
+            ) : (
+              <>
+                <Link to="/login" onClick={() => setOpen(false)}>
+                  Login
+                </Link>
+                <Link to="/register" onClick={() => setOpen(false)}>
+                  Signup
+                </Link>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </header>
