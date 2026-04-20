@@ -24,9 +24,7 @@ const Login = () => {
     try {
       dispatch(setLoading(true));
 
-      const res = await axiosInstance.post("/api/user/login", input, {
-        withCredentials: true,
-      });
+      const res = await axiosInstance.post("/api/user/login", input);
 
       if (res.data.success) {
         dispatch(setUser(res.data.user));
