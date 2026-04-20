@@ -1,12 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
 import axiosInstance from "../../utils/axios";
 
-const shortlistingStatus = ["Accept", "Reject"];
-
 const ApplicantsTable = () => {
-  const [openIndex, setOpenIndex] = useState(null);
   const { applicants } = useSelector((store) => store.application);
 
   const applications = applicants?.applications || [];
@@ -26,19 +23,6 @@ const ApplicantsTable = () => {
       toast.error(error?.response?.data?.message || "Update failed");
     }
   };
-
-  // ✅ close dropdown on outside click
-  useEffect(() => {
-    const handleClickOutside = () => {
-      setOpenIndex(null);
-    };
-
-    window.addEventListener("click", handleClickOutside);
-
-    return () => {
-      window.removeEventListener("click", handleClickOutside);
-    };
-  }, []);
 
   return (
     <div className="px-2 sm:px-4 md:px-6">
@@ -72,7 +56,7 @@ const ApplicantsTable = () => {
                   </td>
                 </tr>
               ) : (
-                applications.map((item, idx) => (
+                applications.map((item) => (
                   <tr key={item._id} className="hover:bg-gray-50 transition">
                     {/* Name */}
                     <td className="px-3 sm:px-4 py-2 font-medium text-gray-800 text-xs sm:text-sm">
@@ -96,44 +80,22 @@ const ApplicantsTable = () => {
 
                     {/* Action */}
                     <td className="px-3 sm:px-4 py-2 text-right">
-                      <div className="relative inline-block">
-                        {/* Button */}
+                      <div className="flex justify-end gap-2 sm:gap-3">
+                        {/* Accept Button */}
                         <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setOpenIndex(openIndex === idx ? null : idx);
-                          }}
-                          className="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs sm:text-sm px-3 py-1 rounded-md transition"
+                          onClick={() => statusHandler("Accept", item._id)}
+                          className="px-3 py-1 text-xs sm:text-sm rounded-md border border-green-500 text-green-600 hover:bg-green-500 hover:text-white transition"
                         >
-                          Update
+                          Accept
                         </button>
 
-                        {/* Dropdown */}
-                        <div
-                          className={`absolute right-0 mt-2 w-32 bg-white border rounded-lg shadow-lg z-20 transition-all duration-200 origin-top ${
-                            openIndex === idx
-                              ? "scale-100 opacity-100"
-                              : "scale-95 opacity-0 pointer-events-none"
-                          }`}
+                        {/* Reject Button */}
+                        <button
+                          onClick={() => statusHandler("Reject", item._id)}
+                          className="px-3 py-1 text-xs sm:text-sm rounded-md border border-red-500 text-red-600 hover:bg-red-500 hover:text-white transition"
                         >
-                          {shortlistingStatus.map((status) => (
-                            <button
-                              key={status}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                statusHandler(status, item._id);
-                                setOpenIndex(null);
-                              }}
-                              className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-100 transition ${
-                                status === "Accept"
-                                  ? "text-green-600"
-                                  : "text-red-600"
-                              }`}
-                            >
-                              {status}
-                            </button>
-                          ))}
-                        </div>
+                          Reject
+                        </button>
                       </div>
                     </td>
                   </tr>
