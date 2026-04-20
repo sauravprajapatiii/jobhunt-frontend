@@ -19,7 +19,7 @@ const AvatarPopover = () => {
 
       if (res.data.success) {
         dispatch(setUser(null));
-        navigate("/");
+        navigate("/login");
         toast.success(res.data.message);
       }
     } catch (error) {
@@ -30,7 +30,7 @@ const AvatarPopover = () => {
     }
   };
 
-  // close when clicking outside
+  // close on outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (popoverRef.current && !popoverRef.current.contains(e.target)) {
@@ -45,46 +45,49 @@ const AvatarPopover = () => {
     <div className="relative" ref={popoverRef}>
       {/* Avatar */}
       <img
-        src={user?.profile?.profilePhoto}
+        src={user?.profile?.profilePhoto || "/default-avatar.png"}
         alt="avatar"
-        className="w-10 h-10 rounded-full cursor-pointer"
+        className="w-10 h-10 rounded-full object-cover cursor-pointer border hover:scale-105 transition"
         onClick={() => setOpen(!open)}
       />
 
-      {/* Popover */}
+      {/* Dropdown */}
       {open && (
-        <div className="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-lg p-2 z-50">
-          <ul className="text-sm">
-            <li className="flex gap-4">
-              <img
-                src={user?.profile?.profilePhoto}
-                alt="avatar"
-                className="w-10 h-10 rounded-full cursor-pointer"
-              />
-              <div className="flex items-center">
-                <h1 className="text-l">{user?.fullname}</h1>
-              </div>
-            </li>
+        <div className="absolute right-0 mt-3 w-56 bg-white rounded-xl shadow-xl border z-50 overflow-hidden animate-fadeIn">
+          {/* User Info */}
+          <div className="flex items-center gap-3 p-4 border-b">
+            <img
+              src={user?.profile?.profilePhoto || "/default-avatar.png"}
+              alt="avatar"
+              className="w-10 h-10 rounded-full object-cover"
+            />
+            <div>
+              <h1 className="text-sm font-semibold text-gray-800">
+                {user?.fullname}
+              </h1>
+              <p className="text-xs text-gray-500">{user?.email}</p>
+            </div>
+          </div>
 
+          {/* Menu */}
+          <div className="p-2 text-sm">
             {user?.role === "student" && (
-              <Link to="/profile">
-                <li className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded-md cursor-pointer">
-                  <MdPerson />
-                  Profile
-                </li>
+              <Link to="/profile" onClick={() => setOpen(false)}>
+                <div className="flex items-center gap-3 p-2 rounded-md hover:bg-gray-100 cursor-pointer">
+                  <MdPerson className="text-lg" />
+                  <span>My Profile</span>
+                </div>
               </Link>
             )}
 
-            <li className="p-2 hover:bg-gray-100 rounded-md cursor-pointer text-red-500">
-              <button
-                onClick={logoutHandler}
-                className="flex items-center gap-2"
-              >
-                <MdLogout />
-                Logout
-              </button>
-            </li>
-          </ul>
+            <button
+              onClick={logoutHandler}
+              className="w-full flex items-center gap-3 p-2 rounded-md hover:bg-red-50 text-red-500 cursor-pointer"
+            >
+              <MdLogout className="text-lg" />
+              Logout
+            </button>
+          </div>
         </div>
       )}
     </div>
