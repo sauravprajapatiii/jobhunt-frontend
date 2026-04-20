@@ -5,7 +5,8 @@ import { Menu, X, Briefcase, UserCircle, LogOut } from "lucide-react"; // Added 
 import axiosInstance from "../../utils/axios";
 import { setUser } from "../../redux/authSlice";
 import { toast } from "sonner";
-import AvatarPopover from "./AvatarPopover";
+import AvatarPopover from "../ui/AvatarPopover";
+// import AvatarPopover from "./AvatarPopover";
 
 const Navbar = () => {
   const { user } = useSelector((store) => store.auth);
