@@ -23,10 +23,6 @@ const Job = ({ job }) => {
       {/* Top Row */}
       <div className="flex justify-between items-center text-xs text-gray-500">
         <span>{daysAgo(job?.createdAt)}</span>
-
-        <button className="p-2 rounded-full hover:bg-gray-100 transition">
-          <Bookmark className="w-5 h-5 text-[#7209b7]" />
-        </button>
       </div>
 
       {/* Company */}
@@ -80,10 +76,6 @@ const Job = ({ job }) => {
           className="flex-1 py-2 text-sm rounded-lg bg-[#F83002] text-white font-medium hover:bg-red-600 transition"
         >
           View Details
-        </button>
-
-        <button className="flex-1 py-2 text-sm rounded-lg border border-gray-300 hover:bg-gray-100 transition">
-          Save
         </button>
       </div>
     </div>
