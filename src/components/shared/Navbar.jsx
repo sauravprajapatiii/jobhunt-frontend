@@ -4,12 +4,15 @@ import { useSelector, useDispatch } from "react-redux";
 import { Menu, X, Briefcase, UserCircle, LogOut } from "lucide-react";
 import axiosInstance from "../../utils/axios";
 import { setUser } from "../../redux/authSlice";
+// import { useSelector } from "react-redux";
 import { toast } from "sonner";
 import AvatarPopover from "../ui/AvatarPopover";
+import { Bookmark } from "lucide-react";
 // import AvatarPopover from "./AvatarPopover";
 
 const Navbar = () => {
   const { user } = useSelector((store) => store.auth);
+  const { wishlistCount } = useSelector((store) => store.job);
   const [open, setOpen] = useState(false);
   const location = useLocation();
   const dispatch = useDispatch();
@@ -80,6 +83,14 @@ const Navbar = () => {
               </Link>
               <Link to="/jobs" className={navLinkStyles("/jobs")}>
                 Jobs
+              </Link>
+              <Link to="/wishlist" className={navLinkStyles("/wishlist")}>
+                Wishlist
+                {wishlistCount > 0 && (
+                  <span className="ml-1 bg-red-500 text-white text-xs rounded-full px-2 py-0.5 font-bold">
+                    {wishlistCount}
+                  </span>
+                )}
               </Link>
             </>
           )}
@@ -169,6 +180,16 @@ const Navbar = () => {
                   className={mobileNavLinkStyles("/jobs")}
                 >
                   Jobs
+                </Link>
+                <Link
+                  onClick={() => setOpen(false)}
+                  to="/wishlist"
+                  className={mobileNavLinkStyles("/wishlist")}
+                >
+                  <Bookmark size={20} />
+                  <span>
+                    Wishlist {wishlistCount > 0 && `(${wishlistCount})`}
+                  </span>
                 </Link>
               </>
             )}

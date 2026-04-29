@@ -20,6 +20,8 @@ import PostJob from "./components/admin/PostJob";
 import Applicants from "./components/admin/Applicants";
 import ProtectedRoute from "./components/admin/ProtectedRoute";
 import EditJob from "./components/admin/EditJob";
+import Wishlist from "./components/Wishlist";
+// import ProtectedRoute from "./components/admin/ProtectedRoute";
 
 const appRouter = createBrowserRouter([
   { path: "/", element: <Home /> },
@@ -86,6 +88,7 @@ const appRouter = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
+  { path: "/wishlist", element: <Wishlist /> },
 ]);
 
 const App = () => {

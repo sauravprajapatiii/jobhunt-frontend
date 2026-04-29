@@ -8,6 +8,8 @@ const jobSlice = createSlice({
     singleJob: null,
     searchJobByText: "",
     allAppliedJobs: [],
+    wishlistJobs: [],
+    wishlistCount: 0,
     searchQuery: "",
     filters: {
       // 🎯 for filter card
@@ -32,6 +34,13 @@ const jobSlice = createSlice({
     setAllAppliedJobs: (state, action) => {
       state.allAppliedJobs = action.payload;
     },
+    setWishlistJobs: (state, action) => {
+      state.wishlistJobs = action.payload;
+      state.wishlistCount = action.payload?.length || 0;
+    },
+    setWishlistCount: (state, action) => {
+      state.wishlistCount = action.payload;
+    },
     setSearchQuery: (state, action) => {
       state.searchQuery = action.payload;
     },
@@ -46,6 +55,8 @@ export const {
   setAdminJobs,
   setsearchJobByText,
   setAllAppliedJobs,
+  setWishlistJobs,
+  setWishlistCount,
   setSearchQuery,
   setFilters,
 } = jobSlice.actions;
