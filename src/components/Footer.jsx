@@ -9,7 +9,7 @@ const Footer = () => {
         {/* Logo / About */}
         <div>
           <h1 className="text-2xl font-bold text-white">
-            Job <span className="text-[#F83002]">Portal</span>
+            Talent<span className="text-[#F83002]">Flow</span>
           </h1>
           <p className="text-sm mt-4 leading-relaxed">
             Find your dream job or hire top talent easily. We connect students
@@ -76,7 +76,7 @@ const Footer = () => {
 
       {/* Bottom */}
       <div className="border-t border-gray-800 text-center text-xs sm:text-sm py-4 text-gray-500">
-        © {new Date().getFullYear()} Job Portal. All rights reserved.
+        © {new Date().getFullYear()} TalentFlow. All rights reserved.
       </div>
     </footer>
   );
